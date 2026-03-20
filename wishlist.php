@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/includes/header.php';
+require_once __DIR__ . '/includes/functions.php';
 require_login();
 
 $userId = (int)$_SESSION['user_id'];
@@ -17,6 +17,8 @@ $stmt->bind_param('i', $userId);
 $stmt->execute();
 $listings = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
+
+require_once __DIR__ . '/includes/header.php';
 ?>
 
 <section class="page-header">
@@ -25,6 +27,31 @@ $stmt->close();
         <h1>Your Wishlist</h1>
         <p>Keep track of listings you want to revisit later.</p>
     </div>
+</section>
+
+<section class="results-summary">
+    <div>
+        <span class="eyebrow">Saved overview</span>
+        <h2><?= count($listings); ?> saved listing<?= count($listings) === 1 ? '' : 's'; ?></h2>
+        <p class="section-copy">Your wishlist helps you compare options before you message a seller or make a final decision.</p>
+    </div>
+    <div class="results-meta">
+        <div class="mini-stat">
+            <strong><?= count($listings); ?></strong>
+            <span>items bookmarked for later</span>
+        </div>
+        <div class="mini-stat">
+            <strong><?= count(array_unique(array_map(static function ($listing) {
+                return $listing['category_name'];
+            }, $listings))); ?></strong>
+            <span>categories represented</span>
+        </div>
+        <div class="mini-stat">
+            <strong><?= $listings ? 'Ready' : 'Empty'; ?></strong>
+            <span><?= $listings ? 'to compare and contact sellers' : 'start browsing to save favourites'; ?></span>
+        </div>
+    </div>
+    <a class="btn btn-secondary" href="browse.php">Browse Listings</a>
 </section>
 
 <div class="listing-grid">

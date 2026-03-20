@@ -2,6 +2,24 @@
 require_once __DIR__ . '/includes/header.php';
 
 $featuredListings = [];
+$marketStats = [
+    'active_listings' => 0,
+    'student_sellers' => 0,
+    'categories' => 0,
+];
+
+$statsResult = $mysqli->query("
+    SELECT
+        (SELECT COUNT(*) FROM listings WHERE status = 'Active') AS active_listings,
+        (SELECT COUNT(DISTINCT user_id) FROM listings) AS student_sellers,
+        (SELECT COUNT(*) FROM categories) AS categories
+");
+
+if ($statsResult) {
+    $marketStats = $statsResult->fetch_assoc() ?: $marketStats;
+    $statsResult->free();
+}
+
 $result = $mysqli->query("
     SELECT l.*, c.name AS category_name, u.full_name
     FROM listings l
@@ -27,6 +45,20 @@ while ($row = $result->fetch_assoc()) {
             <a class="btn btn-secondary" href="<?= is_logged_in() ? 'create-listing.php' : 'register.php'; ?>">
                 <?= is_logged_in() ? 'Post a Listing' : 'Join Now'; ?>
             </a>
+        </div>
+        <div class="hero-stats">
+            <div class="stat-chip">
+                <strong><?= (int)$marketStats['active_listings']; ?></strong>
+                <span>active listings ready to browse</span>
+            </div>
+            <div class="stat-chip">
+                <strong><?= (int)$marketStats['student_sellers']; ?></strong>
+                <span>student sellers already participating</span>
+            </div>
+            <div class="stat-chip">
+                <strong><?= (int)$marketStats['categories']; ?></strong>
+                <span>categories covering books, tech, and services</span>
+            </div>
         </div>
     </div>
     <div class="hero-card">
@@ -112,6 +144,31 @@ while ($row = $result->fetch_assoc()) {
 <section class="section-block section-alt">
     <div class="section-head">
         <div>
+            <span class="eyebrow">Customer Focus</span>
+            <h2>Built around the students who actually use it</h2>
+        </div>
+        <a class="text-link" href="about.php">See business overview</a>
+    </div>
+
+    <div class="feature-grid">
+        <article class="feature-card">
+            <h3>Student buyers</h3>
+            <p>Affordable access to textbooks, notes, gadgets, and project help without searching across scattered social posts.</p>
+        </article>
+        <article class="feature-card">
+            <h3>Student sellers</h3>
+            <p>A cleaner place to turn unused items into cash with better structure, visibility, and seller identity.</p>
+        </article>
+        <article class="feature-card">
+            <h3>Student service providers</h3>
+            <p>Tutors, designers, and technical helpers can reach students looking for practical academic support.</p>
+        </article>
+    </div>
+</section>
+
+<section class="section-block section-alt">
+    <div class="section-head">
+        <div>
             <span class="eyebrow">How it works</span>
             <h2>Simple student-to-student trading</h2>
         </div>
@@ -132,6 +189,54 @@ while ($row = $result->fetch_assoc()) {
             <span class="step-number">3</span>
             <h3>Connect safely</h3>
             <p>Contact the seller, arrange the exchange, and leave a review.</p>
+        </div>
+    </div>
+</section>
+
+<section class="section-block">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Business Plan Support</span>
+            <h2>The website now supports the business case too</h2>
+        </div>
+    </div>
+
+    <div class="profile-details-grid">
+        <article class="info-card">
+            <h3>Business overview</h3>
+            <p>See the problem, opportunity, value proposition, customer segments, positioning, operations, and growth roadmap behind UniTrade CY.</p>
+            <a class="btn btn-secondary" href="about.php">Open About Page</a>
+        </article>
+        <article class="info-card">
+            <h3>Trust and risk management</h3>
+            <p>Review current safety controls, platform risks, and the next trust-building steps planned for stronger rollout.</p>
+            <a class="btn btn-secondary" href="trust-safety.php">Open Safety Page</a>
+        </article>
+        <article class="info-card">
+            <h3>Go-to-market and outreach</h3>
+            <p>Explore how UniTrade CY can communicate with students, build partnerships, and support early market adoption.</p>
+            <a class="btn btn-secondary" href="contact.php">Open Contact Page</a>
+        </article>
+        <article class="info-card">
+            <h3>Prototype status</h3>
+            <p>The product side is already tangible: registration, verification, listing management, browsing, profiles, reviews, and wishlist flows.</p>
+            <a class="btn btn-secondary" href="register.php">Try the Product</a>
+        </article>
+    </div>
+</section>
+
+<section class="section-block">
+    <div class="cta-banner">
+        <div>
+            <span class="eyebrow">Ready to get started?</span>
+            <h2><?= is_logged_in() ? 'Turn your unused student essentials into your next sale.' : 'Create your student marketplace account in minutes.'; ?></h2>
+            <p><?= is_logged_in() ? 'Post a listing, save what you like, and keep your marketplace profile polished.' : 'Build your profile, verify your email, and start browsing or selling with a cleaner flow.'; ?></p>
+        </div>
+        <div class="card-actions">
+            <a class="btn btn-primary" href="<?= is_logged_in() ? 'create-listing.php' : 'register.php'; ?>">
+                <?= is_logged_in() ? 'Create Listing' : 'Register Now'; ?>
+            </a>
+            <a class="btn btn-ghost" href="browse.php">Browse Marketplace</a>
         </div>
     </div>
 </section>

@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/includes/header.php';
+require_once __DIR__ . '/includes/functions.php';
 
 $viewedUserId = isset($_GET['id']) ? (int)$_GET['id'] : (is_logged_in() ? (int)$_SESSION['user_id'] : 0);
 
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && is_logged_in() && (int)$_SESSION['u
 }
 
 $stmt = $mysqli->prepare("
-    SELECT id, full_name, email, university, bio, created_at
+    SELECT id, full_name, username, email, university, bio, phone, country, city, address, postcode, is_verified, created_at, last_login
     FROM users
     WHERE id = ?
 ");
@@ -92,6 +92,26 @@ $reviewStats = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
 $isOwnProfile = is_logged_in() && (int)$viewedUserId === (int)$_SESSION['user_id'];
+$activeListingsCount = 0;
+$soldListingsCount = 0;
+
+foreach ($userListings as $listing) {
+    if (($listing['status'] ?? '') === 'Sold') {
+        $soldListingsCount++;
+    } else {
+        $activeListingsCount++;
+    }
+}
+
+$locationBits = array_filter([
+    $profileUser['city'] ?? '',
+    $profileUser['country'] ?? '',
+]);
+$profileLocation = $locationBits ? implode(', ', $locationBits) : 'Cyprus';
+$memberSince = date('M Y', strtotime($profileUser['created_at']));
+$lastSeen = !empty($profileUser['last_login']) ? date('d M Y, H:i', strtotime($profileUser['last_login'])) : 'First login pending';
+
+require_once __DIR__ . '/includes/header.php';
 ?>
 
 <section class="profile-hero">
@@ -100,7 +120,8 @@ $isOwnProfile = is_logged_in() && (int)$viewedUserId === (int)$_SESSION['user_id
         <h1><?= e($profileUser['full_name']); ?></h1>
         <div class="profile-meta">
             <span><?= e($profileUser['university']); ?></span>
-            <span>Joined <?= date('M Y', strtotime($profileUser['created_at'])); ?></span>
+            <span>Joined <?= e($memberSince); ?></span>
+            <span><?= e($profileLocation); ?></span>
         </div>
         <p><?= e($profileUser['bio'] ?: 'This user has not added a bio yet.'); ?></p>
 
@@ -109,15 +130,41 @@ $isOwnProfile = is_logged_in() && (int)$viewedUserId === (int)$_SESSION['user_id
                 <a class="btn btn-primary" href="create-listing.php">Create Listing</a>
                 <a class="btn btn-secondary" href="browse.php">Browse Marketplace</a>
             </div>
+        <?php elseif ($userListings): ?>
+            <div class="profile-actions">
+                <a class="btn btn-primary" href="browse.php">Browse More Listings</a>
+                <a class="btn btn-secondary" href="listing.php?id=<?= (int)$userListings[0]['id']; ?>">View Latest Listing</a>
+            </div>
         <?php endif; ?>
     </div>
 
     <div class="profile-side-card">
-        <h3>Seller Rating</h3>
+        <div>
+            <span class="eyebrow">Trust snapshot</span>
+            <h3 class="seller-card-title">Seller Rating</h3>
+        </div>
         <div class="rating-number">
             <?= $reviewStats['avg_rating'] ? number_format((float)$reviewStats['avg_rating'], 1) : '0.0'; ?>/5
         </div>
-        <p><?= (int)$reviewStats['total_reviews']; ?> review(s)</p>
+        <div class="profile-stats-grid">
+            <div class="mini-stat">
+                <strong><?= (int)$reviewStats['total_reviews']; ?></strong>
+                <span>community reviews</span>
+            </div>
+            <div class="mini-stat">
+                <strong><?= $activeListingsCount; ?></strong>
+                <span>active listings</span>
+            </div>
+            <div class="mini-stat">
+                <strong><?= $soldListingsCount; ?></strong>
+                <span>completed sales</span>
+            </div>
+        </div>
+        <div class="detail-note">
+            <?= !empty($profileUser['is_verified'])
+                ? 'This student account has completed email verification.'
+                : 'This account is still completing verification.'; ?>
+        </div>
         <?php if (!$isOwnProfile && is_logged_in()): ?>
             <p class="muted-text">Bought something from this seller? Leave a rating below.</p>
         <?php endif; ?>
@@ -135,6 +182,80 @@ $isOwnProfile = is_logged_in() && (int)$viewedUserId === (int)$_SESSION['user_id
         <?php endforeach; ?>
     </div>
 <?php endif; ?>
+
+<section class="section-block">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Profile details</span>
+            <h2><?= $isOwnProfile ? 'Your marketplace identity' : 'Seller details'; ?></h2>
+        </div>
+    </div>
+
+    <div class="profile-details-grid">
+        <article class="info-card">
+            <h3>Account Snapshot</h3>
+            <div class="info-list">
+                <div class="info-row">
+                    <strong>Username</strong>
+                    <span>@<?= e($profileUser['username'] ?: 'student'); ?></span>
+                </div>
+                <div class="info-row">
+                    <strong>University</strong>
+                    <span><?= e($profileUser['university']); ?></span>
+                </div>
+                <div class="info-row">
+                    <strong>Location</strong>
+                    <span><?= e($profileLocation); ?></span>
+                </div>
+                <div class="info-row">
+                    <strong>Member since</strong>
+                    <span><?= e($memberSince); ?></span>
+                </div>
+            </div>
+        </article>
+
+        <article class="info-card">
+            <h3><?= $isOwnProfile ? 'Private account details' : 'Seller trust info'; ?></h3>
+            <div class="info-list">
+                <?php if ($isOwnProfile): ?>
+                    <div class="info-row">
+                        <strong>Email</strong>
+                        <span><?= e($profileUser['email']); ?></span>
+                    </div>
+                    <div class="info-row">
+                        <strong>Phone</strong>
+                        <span><?= e($profileUser['phone'] ?: 'Not added'); ?></span>
+                    </div>
+                    <div class="info-row">
+                        <strong>Address</strong>
+                        <span><?= e(trim(implode(', ', array_filter([$profileUser['address'], $profileUser['postcode'], $profileUser['city'], $profileUser['country']]))) ?: 'Not added'); ?></span>
+                    </div>
+                    <div class="info-row">
+                        <strong>Last login</strong>
+                        <span><?= e($lastSeen); ?></span>
+                    </div>
+                <?php else: ?>
+                    <div class="info-row">
+                        <strong>Verification</strong>
+                        <span><?= !empty($profileUser['is_verified']) ? 'Email verified' : 'Verification pending'; ?></span>
+                    </div>
+                    <div class="info-row">
+                        <strong>Seller activity</strong>
+                        <span><?= $activeListingsCount; ?> active and <?= $soldListingsCount; ?> sold</span>
+                    </div>
+                    <div class="info-row">
+                        <strong>Average rating</strong>
+                        <span><?= $reviewStats['avg_rating'] ? number_format((float)$reviewStats['avg_rating'], 1) . '/5' : 'No ratings yet'; ?></span>
+                    </div>
+                    <div class="info-row">
+                        <strong>Last active</strong>
+                        <span><?= e($lastSeen); ?></span>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </article>
+    </div>
+</section>
 
 <section class="section-block">
     <div class="section-head">
@@ -223,10 +344,10 @@ $isOwnProfile = is_logged_in() && (int)$viewedUserId === (int)$_SESSION['user_id
                 <article class="review-item">
                     <div class="review-top">
                         <strong><?= e($review['reviewer_name']); ?></strong>
-                        <span><?= str_repeat('★', (int)$review['rating']); ?><?= str_repeat('☆', 5 - (int)$review['rating']); ?></span>
+                        <span class="review-stars" aria-label="<?= (int)$review['rating']; ?> out of 5 stars"><?= render_rating_stars((int)$review['rating']); ?></span>
                     </div>
                     <p><?= e($review['comment']); ?></p>
-                    <small><?= date('d M Y', strtotime($review['created_at'])); ?></small>
+                    <small class="muted-text"><?= date('d M Y', strtotime($review['created_at'])); ?></small>
                 </article>
             <?php endforeach; ?>
         <?php else: ?>

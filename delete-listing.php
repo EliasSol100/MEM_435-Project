@@ -2,7 +2,13 @@
 require_once __DIR__ . '/includes/functions.php';
 require_login();
 
-$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$id = (int)($_POST['listing_id'] ?? 0);
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !verify_csrf()) {
+    set_flash('error', 'Invalid delete request.');
+    redirect('profile.php');
+}
+
 $listing = $id > 0 ? fetch_listing_by_id($id) : null;
 
 if (!$listing || (int)$listing['user_id'] !== (int)$_SESSION['user_id']) {

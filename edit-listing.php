@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/includes/header.php';
+require_once __DIR__ . '/includes/functions.php';
 require_login();
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
@@ -106,6 +106,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'Could not update listing. Please try again.';
     }
 }
+
+require_once __DIR__ . '/includes/header.php';
 ?>
 
 <section class="page-header">
@@ -116,95 +118,128 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 </section>
 
-<?php if ($errors): ?>
-    <div class="alert alert-error">
-        <?php foreach ($errors as $error): ?>
-            <div><?= e($error); ?></div>
-        <?php endforeach; ?>
-    </div>
-<?php endif; ?>
-
-<form method="POST" enctype="multipart/form-data" class="form-card wide-card">
-    <input type="hidden" name="csrf_token" value="<?= e(csrf_token()); ?>">
-
-    <div class="form-grid two-cols">
-        <div class="form-group">
-            <label for="title">Title</label>
-            <input id="title" type="text" name="title" value="<?= e($title); ?>" required>
-        </div>
-
-        <div class="form-group">
-            <label for="price">Price (€)</label>
-            <input id="price" type="number" step="0.01" name="price" value="<?= e($price); ?>" required>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label for="description">Description</label>
-        <textarea id="description" name="description" rows="6" required><?= e($description); ?></textarea>
-    </div>
-
-    <div class="form-grid three-cols">
-        <div class="form-group">
-            <label for="category_id">Category</label>
-            <select id="category_id" name="category_id" required>
-                <option value="0">Select category</option>
-                <?php foreach ($categories as $category): ?>
-                    <option value="<?= (int)$category['id']; ?>" <?= $categoryId === (int)$category['id'] ? 'selected' : ''; ?>>
-                        <?= e($category['name']); ?>
-                    </option>
+<div class="form-layout">
+    <div>
+        <?php if ($errors): ?>
+            <div class="alert alert-error">
+                <?php foreach ($errors as $error): ?>
+                    <div><?= e($error); ?></div>
                 <?php endforeach; ?>
-            </select>
-        </div>
+            </div>
+        <?php endif; ?>
 
-        <div class="form-group">
-            <label for="item_type">Type</label>
-            <select id="item_type" name="item_type">
-                <option value="Item" <?= $itemType === 'Item' ? 'selected' : ''; ?>>Item</option>
-                <option value="Notes" <?= $itemType === 'Notes' ? 'selected' : ''; ?>>Notes</option>
-                <option value="Service" <?= $itemType === 'Service' ? 'selected' : ''; ?>>Service</option>
-            </select>
-        </div>
+        <form method="POST" enctype="multipart/form-data" class="form-card wide-card">
+            <input type="hidden" name="csrf_token" value="<?= e(csrf_token()); ?>">
 
-        <div class="form-group">
-            <label for="condition_label">Condition</label>
-            <select id="condition_label" name="condition_label">
-                <option value="New" <?= $condition === 'New' ? 'selected' : ''; ?>>New</option>
-                <option value="Like New" <?= $condition === 'Like New' ? 'selected' : ''; ?>>Like New</option>
-                <option value="Good" <?= $condition === 'Good' ? 'selected' : ''; ?>>Good</option>
-                <option value="Fair" <?= $condition === 'Fair' ? 'selected' : ''; ?>>Fair</option>
-            </select>
-        </div>
+            <div class="form-grid two-cols">
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input id="title" type="text" name="title" value="<?= e($title); ?>" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="price">Price (€)</label>
+                    <input id="price" type="number" step="0.01" name="price" value="<?= e($price); ?>" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" rows="6" required><?= e($description); ?></textarea>
+            </div>
+
+            <div class="form-grid three-cols">
+                <div class="form-group">
+                    <label for="category_id">Category</label>
+                    <select id="category_id" name="category_id" required>
+                        <option value="0">Select category</option>
+                        <?php foreach ($categories as $category): ?>
+                            <option value="<?= (int)$category['id']; ?>" <?= $categoryId === (int)$category['id'] ? 'selected' : ''; ?>>
+                                <?= e($category['name']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="item_type">Type</label>
+                    <select id="item_type" name="item_type">
+                        <option value="Item" <?= $itemType === 'Item' ? 'selected' : ''; ?>>Item</option>
+                        <option value="Notes" <?= $itemType === 'Notes' ? 'selected' : ''; ?>>Notes</option>
+                        <option value="Service" <?= $itemType === 'Service' ? 'selected' : ''; ?>>Service</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="condition_label">Condition</label>
+                    <select id="condition_label" name="condition_label">
+                        <option value="New" <?= $condition === 'New' ? 'selected' : ''; ?>>New</option>
+                        <option value="Like New" <?= $condition === 'Like New' ? 'selected' : ''; ?>>Like New</option>
+                        <option value="Good" <?= $condition === 'Good' ? 'selected' : ''; ?>>Good</option>
+                        <option value="Fair" <?= $condition === 'Fair' ? 'selected' : ''; ?>>Fair</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-grid two-cols">
+                <div class="form-group">
+                    <label for="university_target">Target University (optional)</label>
+                    <input id="university_target" type="text" name="university_target" value="<?= e($universityTarget); ?>">
+                </div>
+
+                <div class="form-group">
+                    <label for="image_url">External Image URL (optional)</label>
+                    <input id="image_url" type="url" name="image_url" value="<?= e($imageUrl); ?>">
+                </div>
+            </div>
+
+            <div class="form-grid two-cols">
+                <div class="form-group">
+                    <label for="status">Listing Status</label>
+                    <select id="status" name="status">
+                        <option value="Active" <?= $status === 'Active' ? 'selected' : ''; ?>>Active</option>
+                        <option value="Sold" <?= $status === 'Sold' ? 'selected' : ''; ?>>Sold</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="image">Replace Image (optional)</label>
+                    <input id="image" type="file" name="image" accept=".jpg,.jpeg,.png,.webp">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
     </div>
 
-    <div class="form-grid two-cols">
-        <div class="form-group">
-            <label for="university_target">Target University (optional)</label>
-            <input id="university_target" type="text" name="university_target" value="<?= e($universityTarget); ?>">
+    <aside class="support-card">
+        <div>
+            <span class="eyebrow">Listing health</span>
+            <h3>Keep this post up to date</h3>
+        </div>
+        <div class="support-list">
+            <div class="support-item">
+                <strong>Status matters</strong>
+                <p>Mark sold listings quickly so buyers do not waste time messaging you.</p>
+            </div>
+            <div class="support-item">
+                <strong>Refresh the copy</strong>
+                <p>Update details if condition changes, a bundle grows, or pickup options improve.</p>
+            </div>
+            <div class="support-item">
+                <strong>Improve visuals</strong>
+                <p>A sharper image often makes older listings feel active again.</p>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="image_url">External Image URL (optional)</label>
-            <input id="image_url" type="url" name="image_url" value="<?= e($imageUrl); ?>">
+        <div class="image-preview-card">
+            <img src="<?= listing_image($listing); ?>" alt="<?= e($listing['title']); ?>">
+            <div class="image-preview-meta">
+                <strong><?= e($listing['title']); ?></strong>
+                <p class="muted-text">Current status: <?= e($status); ?></p>
+            </div>
         </div>
-    </div>
-
-    <div class="form-grid two-cols">
-        <div class="form-group">
-            <label for="status">Listing Status</label>
-            <select id="status" name="status">
-                <option value="Active" <?= $status === 'Active' ? 'selected' : ''; ?>>Active</option>
-                <option value="Sold" <?= $status === 'Sold' ? 'selected' : ''; ?>>Sold</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="image">Replace Image (optional)</label>
-            <input id="image" type="file" name="image" accept=".jpg,.jpeg,.png,.webp">
-        </div>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Save Changes</button>
-</form>
+    </aside>
+</div>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

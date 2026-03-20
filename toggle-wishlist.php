@@ -36,5 +36,11 @@ if ($existing) {
     set_flash('success', 'Listing added to wishlist.');
 }
 
-$referer = $_SERVER['HTTP_REFERER'] ?? 'browse.php';
-redirect($referer);
+$referer = $_SERVER['HTTP_REFERER'] ?? '';
+$appBase = rtrim(APP_BASE_URL, '/');
+
+if ($referer !== '' && str_starts_with($referer, $appBase)) {
+    redirect($referer);
+}
+
+redirect('browse.php');

@@ -50,6 +50,18 @@ $listings = $result->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 
 $categories = get_categories();
+$listingCount = count($listings);
+$hasFilters = $search !== '' || $categoryId > 0 || $itemType !== '';
+$selectedCategoryName = 'All categories';
+
+if ($categoryId > 0) {
+    foreach ($categories as $category) {
+        if ((int)$category['id'] === $categoryId) {
+            $selectedCategoryName = $category['name'];
+            break;
+        }
+    }
+}
 ?>
 
 <section class="page-header">
@@ -95,6 +107,35 @@ $categories = get_categories();
     </form>
 </section>
 
+<section class="results-summary">
+    <div>
+        <span class="eyebrow">Results</span>
+        <h2><?= $listingCount; ?> listing<?= $listingCount === 1 ? '' : 's'; ?> available</h2>
+        <p class="section-copy">
+            <?= $hasFilters
+                ? 'Filtered by ' . e($selectedCategoryName) . ($itemType !== '' ? ', ' . e($itemType) : '') . ($search !== '' ? ', and your search term.' : '.')
+                : 'Showing the latest active marketplace posts across all categories.'; ?>
+        </p>
+    </div>
+    <div class="results-meta">
+        <div class="mini-stat">
+            <strong><?= count($categories); ?></strong>
+            <span>categories to explore</span>
+        </div>
+        <div class="mini-stat">
+            <strong><?= $itemType !== '' ? e($itemType) : 'All'; ?></strong>
+            <span>listing type currently selected</span>
+        </div>
+        <div class="mini-stat">
+            <strong><?= $search !== '' ? '"' . e($search) . '"' : 'Open'; ?></strong>
+            <span>search focus right now</span>
+        </div>
+    </div>
+    <?php if ($hasFilters): ?>
+        <a class="btn btn-secondary" href="browse.php">Clear Filters</a>
+    <?php endif; ?>
+</section>
+
 <div class="listing-grid">
     <?php if ($listings): ?>
         <?php foreach ($listings as $listing): ?>
@@ -120,6 +161,12 @@ $categories = get_categories();
         <div class="empty-state">
             <h3>No matching listings found</h3>
             <p>Try a different search or category filter.</p>
+            <div class="card-actions">
+                <a class="btn btn-primary" href="browse.php">Reset Filters</a>
+                <?php if (is_logged_in()): ?>
+                    <a class="btn btn-secondary" href="create-listing.php">Post a Listing</a>
+                <?php endif; ?>
+            </div>
         </div>
     <?php endif; ?>
 </div>
