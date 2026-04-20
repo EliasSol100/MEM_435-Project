@@ -22,9 +22,8 @@ if ($displayName === '' && !empty($user['full_name'])) {
 <body>
 <header class="site-header">
     <div class="container navbar">
-        <a class="logo" href="index.php">
-            <span class="logo-mark">U</span>
-            <span><?= e(SITE_NAME); ?></span>
+        <a class="logo" href="index.php" aria-label="<?= e(SITE_NAME); ?>">
+            <img class="logo-image" src="assets/images/unitrade-logo.svg" alt="<?= e(SITE_NAME); ?>">
         </a>
 
         <div class="nav-cluster">

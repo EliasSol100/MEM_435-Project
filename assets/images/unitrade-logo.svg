@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 150" role="img" aria-labelledby="title desc">
+  <title id="title">UniTrade logo</title>
+  <desc id="desc">Graduation cap logo with a stylized U and the UniTrade wordmark.</desc>
+  <defs>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1f68ff"/>
+      <stop offset="100%" stop-color="#003fc9"/>
+    </linearGradient>
+    <linearGradient id="tealGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#58d8d0"/>
+      <stop offset="100%" stop-color="#2cbdb8"/>
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(14 8)">
+    <polygon points="16,28 74,0 132,28 74,56" fill="url(#blueGrad)"/>
+    <polygon points="74,48 126,26 126,66 102,78 74,56" fill="url(#blueGrad)"/>
+    <line x1="18" y1="30" x2="18" y2="72" stroke="#003fc9" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="18" cy="73" r="5" fill="#003fc9"/>
+    <path d="M18 78 C12 90 10 103 16 116 C22 103 24 90 18 78 Z" fill="#003fc9"/>
+
+    <path d="M34 46 H74 V68 H60 V104 C60 118 66 128 80 134 C70 135 62 135 54 133 C34 127 22 112 22 92 V58 Z" fill="url(#blueGrad)"/>
+    <path d="M79 58 H124 V109 H136 L106 139 L76 109 H88 V77 H79 Z" fill="url(#tealGrad)"/>
+    <path d="M55 58 H84 L110 84 H94 V109 H76 V84 H55 Z" fill="#ffffff"/>
+  </g>
+
+  <text x="184" y="102" fill="url(#blueGrad)" font-family="Manrope, Arial, sans-serif" font-size="74" font-weight="800" letter-spacing="-2">Uni</text>
+  <text x="325" y="102" fill="#25314b" font-family="Manrope, Arial, sans-serif" font-size="74" font-weight="800" letter-spacing="-2">Trade</text>
+</svg>
