@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="18 0 136 150" role="img" aria-labelledby="title desc">
+  <title id="title">UniTrade mark</title>
+  <desc id="desc">Graduation cap with a stylized U-shaped marketplace mark.</desc>
+  <defs>
+    <linearGradient id="markBlueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1f68ff"/>
+      <stop offset="100%" stop-color="#003fc9"/>
+    </linearGradient>
+    <linearGradient id="markTealGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#58d8d0"/>
+      <stop offset="100%" stop-color="#2cbdb8"/>
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(14 8)">
+    <polygon points="16,28 74,0 132,28 74,56" fill="url(#markBlueGrad)"/>
+    <polygon points="74,48 126,26 126,66 102,78 74,56" fill="url(#markBlueGrad)"/>
+    <line x1="18" y1="30" x2="18" y2="72" stroke="#003fc9" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="18" cy="73" r="5" fill="#003fc9"/>
+    <path d="M18 78 C12 90 10 103 16 116 C22 103 24 90 18 78 Z" fill="#003fc9"/>
+
+    <path d="M34 46 H74 V68 H60 V104 C60 118 66 128 80 134 C70 135 62 135 54 133 C34 127 22 112 22 92 V58 Z" fill="url(#markBlueGrad)"/>
+    <path d="M79 58 H124 V109 H136 L106 139 L76 109 H88 V77 H79 Z" fill="url(#markTealGrad)"/>
+  </g>
+</svg>

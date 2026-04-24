@@ -99,7 +99,7 @@ require_once __DIR__ . '/includes/header.php';
     <div class="auth-heading">
         <span class="eyebrow">Welcome back</span>
         <h1>Log in to UniTrade CY</h1>
-        <p>Sign in with your username or email. If your profile is incomplete or your account is still unverified, we will guide you through the remaining steps.</p>
+        <p>Sign in with your username or email. New accounts complete profile setup and email verification during registration before marketplace access.</p>
     </div>
 
     <?php if ($errors): ?>
@@ -130,7 +130,7 @@ require_once __DIR__ . '/includes/header.php';
     </form>
 
     <p class="muted-text">No account yet? <a class="text-link" href="register.php">Register here</a>.</p>
-    <p class="muted-text"><a class="text-link" href="forgot-password.php">Forgot password?</a> | <a class="text-link" href="resend-verification.php">Resend verification code</a></p>
+    <p class="muted-text"><a class="text-link" href="forgot-password.php">Forgot password?</a></p>
 </section>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

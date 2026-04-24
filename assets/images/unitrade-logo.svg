@@ -21,7 +21,6 @@
 
     <path d="M34 46 H74 V68 H60 V104 C60 118 66 128 80 134 C70 135 62 135 54 133 C34 127 22 112 22 92 V58 Z" fill="url(#blueGrad)"/>
     <path d="M79 58 H124 V109 H136 L106 139 L76 109 H88 V77 H79 Z" fill="url(#tealGrad)"/>
-    <path d="M55 58 H84 L110 84 H94 V109 H76 V84 H55 Z" fill="#ffffff"/>
   </g>
 
   <text x="184" y="102" fill="url(#blueGrad)" font-family="Manrope, Arial, sans-serif" font-size="74" font-weight="800" letter-spacing="-2">Uni</text>
